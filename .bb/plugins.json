@@ -1,0 +1,12 @@
+{
+  "$schema": "https://getbb.app/schemas/plugins.schema.json",
+  "schemaVersion": 1,
+  "name": "bb-plugins",
+  "plugins": [
+    { "name": "bocchi", "source": "./bb-plugin-bocchi" },
+    { "name": "opencode-go-usage", "source": "./bb-plugin-opencode-go-usage" },
+    { "name": "pstack", "source": "./bb-plugin-pstack" },
+    { "name": "reasoning-split", "source": "./bb-plugin-reasoning-split" },
+    { "name": "trajectory", "source": "./bb-plugin-trajectory" }
+  ]
+}

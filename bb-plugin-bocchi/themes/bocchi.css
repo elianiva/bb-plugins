@@ -1,0 +1,242 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap");
+/* Bocchi — pink cute, soft gradient. Based on elianiva.com — elianiva.com/src/styles.css */
+
+:root, .light {
+  /* anchors — warm cream canvas, deep rosy ink */
+  --canvas: #fff9f5;
+  --ink: #431407;
+
+  /* chrome — extracted from elianiva.com styles.css */
+  --background: #fff9f5;
+  --card: #ffffff;
+  --popover: #ffffff;
+  --secondary: #fce7f3;                 /* pink-100 */
+  --accent: #fdf2f8;                    /* pink-50 */
+  --muted: #fff0f5;                     /* blush */
+  --border: oklch(0.899 0.061 343.231 / 0.5); /* pink-200/50 = #fbcfe8 @ 50% */
+  --border-hairline: #fbcfe8;
+  --border-seam: #fbcfe8;
+  --border-seam-vertical: #fbcfe8;
+  --input: #f9a8d4;                     /* pink-300 */
+  --surface-recessed: #fff0f5;
+  --surface-raised: #ffffff;
+  --surface-scrim: color-mix(in oklch, var(--canvas) 88%, transparent);
+  --state-hover: color-mix(in oklch, #db2777 6%, transparent);
+  --state-active: color-mix(in oklch, #db2777 10%, transparent);
+  --sidebar: #fff5f0;
+  --sidebar-foreground: #431407;
+  --sidebar-accent: #fce7f3;
+  --sidebar-border: #fbcfe8;
+
+  /* accent — Bocchi pink */
+  --primary: #db2777;                   /* site focus pink */
+  --primary-foreground: #fff0f5;
+  --ring: #db2777;
+  --sidebar-ring: #db2777;
+  --surface-selected: #fce7f3;
+  --surface-selected-border: #f9a8d4;
+  --file-accent: #ec4899;
+
+  /* text tiers — from site: pink-950/80, pink-700 etc */
+  --foreground: #431407;
+  --muted-foreground: #7e5a6b;          /* desaturated rose */
+  --subtle-foreground: #a68998;
+  --readback-foreground: #8d6b7a;
+
+  /* semantic — keep pink family but distinct */
+  --destructive: #e11d48;               /* rose-600 */
+  --destructive-foreground: #fff0f5;
+  --destructive-text: #be123c;
+  --surface-destructive: #fff1f2;
+  --surface-destructive-border: #fecdd3;
+  --warning: #f59e0b;
+  --warning-text: #92400e;
+  --attention: #f59e0b;
+  --success: #10b981;
+  --diff-added: #10b981;
+  --diff-removed: #e11d48;
+  --pr-merged: #a855f7;
+
+  --radius: 0.75rem;
+
+  /* fonts — Space Grotesk for sans, JetBrains Mono for mono */
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-serif: Georgia, serif;
+
+  /* bump thread readability slightly (was 0.9375) */
+  --text-base: 0.975rem;
+  --text-base--line-height: 1.6;
+  --text-sm: 0.85rem;
+  --text-sm--line-height: 1.5;
+
+  /* ANSI — pink-tinted */
+  --ansi-0: #fff0f5;
+  --ansi-1: #e11d48;
+  --ansi-2: #10b981;
+  --ansi-3: #f59e0b;
+  --ansi-4: #db2777;
+  --ansi-5: #a855f7;
+  --ansi-6: #06b6d4;
+  --ansi-7: #431407;
+  --ansi-8: #fbcfe8;
+  --ansi-9: #fb7185;
+  --ansi-10: #34d399;
+  --ansi-11: #fbbf24;
+  --ansi-12: #f472b6;
+  --ansi-13: #c084fc;
+  --ansi-14: #67e8f9;
+  --ansi-15: #431407;
+  --ansi-bg-fg-0: #431407;
+  --ansi-bg-fg-1: #fff0f5;
+  --ansi-bg-fg-2: #431407;
+  --ansi-bg-fg-3: #431407;
+  --ansi-bg-fg-4: #fff0f5;
+  --ansi-bg-fg-5: #fff0f5;
+  --ansi-bg-fg-6: #431407;
+  --ansi-bg-fg-7: #fff0f5;
+  --ansi-bg-fg-8: #431407;
+  --ansi-bg-fg-9: #431407;
+  --ansi-bg-fg-10: #431407;
+  --ansi-bg-fg-11: #431407;
+  --ansi-bg-fg-12: #431407;
+  --ansi-bg-fg-13: #431407;
+  --ansi-bg-fg-14: #431407;
+  --ansi-bg-fg-15: #fff0f5;
+}
+
+.dark {
+  --canvas: #22101b;
+  --ink: #fce7f3;
+
+  --background: #1a0a14;
+  --card: #2a1320;
+  --popover: #2a1320;
+  --secondary: #3a1a2e;
+  --accent: #2e1426;
+  --muted: #2a1320;
+  --border: #4a2340;
+  --border-hairline: #4a2340;
+  --border-seam: #3a1a2e;
+  --border-seam-vertical: #3a1a2e;
+  --input: #5a2d4a;
+  --surface-recessed: #1f0d1a;
+  --surface-raised: #2a1320;
+  --surface-scrim: color-mix(in oklch, var(--canvas) 90%, transparent);
+  --state-hover: color-mix(in oklch, #f472b6 8%, transparent);
+  --state-active: color-mix(in oklch, #f472b6 13%, transparent);
+  --sidebar: #1a0a14;
+  --sidebar-foreground: #fce7f3;
+  --sidebar-accent: #3a1a2e;
+  --sidebar-border: #4a2340;
+
+  --primary: #f472b6;
+  --primary-foreground: #1a0a14;
+  --ring: #f472b6;
+  --sidebar-ring: #f472b6;
+  --surface-selected: #3a1a2e;
+  --surface-selected-border: #ec4899;
+  --file-accent: #f9a8d4;
+
+  --foreground: #fce7f3;
+  --muted-foreground: #d9a8c2;
+  --subtle-foreground: #a67a95;
+  --readback-foreground: #c99ab8;
+
+  --destructive: #fb7185;
+  --destructive-foreground: #1a0a14;
+  --destructive-text: #fda4af;
+  --surface-destructive: #3a1a2e;
+  --surface-destructive-border: #7a2a3a;
+  --warning: #fbbf24;
+  --warning-text: #fde68a;
+  --attention: #fbbf24;
+  --success: #34d399;
+  --diff-added: #34d399;
+  --diff-removed: #fb7185;
+  --pr-merged: #c084fc;
+
+  --ansi-0: #1a0a14;
+  --ansi-1: #fb7185;
+  --ansi-2: #34d399;
+  --ansi-3: #fbbf24;
+  --ansi-4: #f472b6;
+  --ansi-5: #c084fc;
+  --ansi-6: #67e8f9;
+  --ansi-7: #fce7f3;
+  --ansi-8: #7a4a6b;
+  --ansi-9: #fda4af;
+  --ansi-10: #6ee7b7;
+  --ansi-11: #fcd34d;
+  --ansi-12: #f9a8d4;
+  --ansi-13: #d8b4fe;
+  --ansi-14: #a5f3fc;
+  --ansi-15: #fce7f3;
+  --ansi-bg-fg-0: #fce7f3;
+  --ansi-bg-fg-1: #1a0a14;
+  --ansi-bg-fg-2: #1a0a14;
+  --ansi-bg-fg-3: #1a0a14;
+  --ansi-bg-fg-4: #1a0a14;
+  --ansi-bg-fg-5: #1a0a14;
+  --ansi-bg-fg-6: #1a0a14;
+  --ansi-bg-fg-7: #1a0a14;
+  --ansi-bg-fg-8: #fce7f3;
+  --ansi-bg-fg-9: #1a0a14;
+  --ansi-bg-fg-10: #1a0a14;
+  --ansi-bg-fg-11: #1a0a14;
+  --ansi-bg-fg-12: #1a0a14;
+  --ansi-bg-fg-13: #1a0a14;
+  --ansi-bg-fg-14: #1a0a14;
+  --ansi-bg-fg-15: #1a0a14;
+}
+
+/* === soft gradient — elianiva.com: 135deg #fff5f0 → #fff9f5 → #fff0f5 === */
+html, body,
+.bb-app, #root,
+[data-theme] {
+  background: linear-gradient(135deg, #fff5f0 0%, #fff9f5 50%, #fff0f5 100%) fixed !important;
+}
+
+.dark html, .dark body,
+.dark .bb-app, .dark #root {
+  background: linear-gradient(135deg, #1a0a14 0%, #22101b 50%, #2a0f1f 100%) fixed !important;
+}
+
+/* subtle grain like site body::before */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  opacity: 0.025;
+  pointer-events: none;
+  z-index: -1;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* soft vignette */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(255, 240, 245, 0.45) 100%);
+  pointer-events: none;
+  z-index: -1;
+}
+.dark body::after {
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(26, 10, 20, 0.5) 100%);
+}
+
+/* cute pink frame — 6px like site's fixed frame */
+.bb-app-shell, #root {
+  box-shadow: inset 0 0 0 6px #fbcfe8;
+}
+.dark .bb-app-shell, .dark #root {
+  box-shadow: inset 0 0 0 6px #4a2340;
+}
+
+/* thread readability — keep slightly larger */
+main, [role="main"], article {
+  font-size: var(--text-base);
+  line-height: var(--text-base--line-height);
+}
