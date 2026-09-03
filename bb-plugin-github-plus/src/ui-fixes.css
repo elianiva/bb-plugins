@@ -1,0 +1,120 @@
+/* Keep the recovered views usable when the host's generated utility sheet is stale. */
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])) .items-end,
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])).items-end {
+  align-items: flex-end;
+}
+
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])) .capitalize,
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])).capitalize {
+  text-transform: capitalize;
+}
+
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])) .tracking-tight,
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])).tracking-tight {
+  letter-spacing: -0.025em;
+}
+
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])) .max-w-3xl,
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])).max-w-3xl {
+  max-width: 48rem;
+}
+
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])) .mt-3,
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])).mt-3 {
+  margin-top: calc(var(--spacing) * 3);
+}
+
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])) .gap-2\.5,
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])).gap-2\.5 {
+  gap: calc(var(--spacing) * 2.5);
+}
+
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])) .pl-3,
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])).pl-3 {
+  padding-left: calc(var(--spacing) * 3);
+}
+
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])) .pt-3,
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])).pt-3 {
+  padding-top: calc(var(--spacing) * 3);
+}
+
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])) .py-4,
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])).py-4 {
+  padding-top: calc(var(--spacing) * 4);
+  padding-bottom: calc(var(--spacing) * 4);
+}
+
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])) .space-y-2 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: calc(var(--spacing) * 2);
+}
+
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])) .break-words,
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])).break-words {
+  overflow-wrap: break-word;
+}
+
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])) .bg-orange-500,
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])).bg-orange-500 {
+  background-color: #f97316;
+}
+
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])) .hover\:text-primary:hover,
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])).hover\:text-primary:hover {
+  color: var(--primary);
+}
+
+@media (min-width: 48rem) {
+  :where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])) .md\:px-5,
+  :where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])).md\:px-5 {
+    padding-left: calc(var(--spacing) * 5);
+    padding-right: calc(var(--spacing) * 5);
+  }
+}
+
+@container (min-width: 48rem) {
+  :where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])) .\@\[48rem\]\:flex-nowrap,
+  :where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])).\@\[48rem\]\:flex-nowrap {
+    flex-wrap: nowrap;
+  }
+
+  :where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])) .\@\[48rem\]\:shrink-0,
+  :where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])).\@\[48rem\]\:shrink-0 {
+    flex-shrink: 0;
+  }
+
+  :where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])) .\@\[48rem\]\:text-right,
+  :where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])).\@\[48rem\]\:text-right {
+    text-align: right;
+  }
+
+  :where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])) .\@\[48rem\]\:w-56,
+  :where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])).\@\[48rem\]\:w-56 {
+    width: calc(var(--spacing) * 56);
+  }
+
+  :where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])) .\@\[48rem\]\:order-7,
+  :where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])).\@\[48rem\]\:order-7 {
+    order: 7;
+  }
+}
+
+@container (min-width: 60rem) {
+  :where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])) .\@\[60rem\]\:block,
+  :where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])).\@\[60rem\]\:block {
+    display: block;
+  }
+
+  :where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])) .\@\[60rem\]\:order-3,
+  :where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])).\@\[60rem\]\:order-3 {
+    order: 3;
+  }
+}
+
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])) .line-clamp-2,
+:where([data-bb-plugin="github-plus"], [data-bb-plugin-root]:not([data-bb-plugin])).line-clamp-2 {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}

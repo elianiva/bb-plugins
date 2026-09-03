@@ -4,9 +4,11 @@
   "name": "bb-plugins",
   "plugins": [
     { "name": "bocchi", "source": "./bb-plugin-bocchi" },
+    { "name": "github-plus", "source": "./bb-plugin-github-plus" },
     { "name": "opencode-go-usage", "source": "./bb-plugin-opencode-go-usage" },
     { "name": "pstack", "source": "./bb-plugin-pstack" },
     { "name": "reasoning-split", "source": "./bb-plugin-reasoning-split" },
+    { "name": "simple-subagent", "source": "./bb-plugin-simple-subagent" },
     { "name": "trajectory", "source": "./bb-plugin-trajectory" }
   ]
 }

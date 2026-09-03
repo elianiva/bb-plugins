@@ -1,0 +1,65 @@
+{
+  "name": "bb-plugin-github-plus",
+  "version": "0.1.0",
+  "description": "Browse GitHub issues and pull requests in BB.",
+  "type": "module",
+  "license": "MIT",
+  "homepage": "https://github.com/elianiva/bb-plugin-github-plus#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elianiva/bb-plugin-github-plus.git"
+  },
+  "engines": {
+    "bb": ">=0.0",
+    "bbPluginSdk": ">=0.4.10"
+  },
+  "bb": {
+    "name": "GitHub Plus",
+    "description": "Browse GitHub issues and pull requests in BB.",
+    "branding": {
+      "icon": "Github"
+    },
+    "server": "./src/server.ts",
+    "app": "./src/app.tsx"
+  },
+  "dependencies": {
+    "zod": "^4.3.6"
+  },
+  "scripts": {
+    "build": "node scripts/clean-dist.mjs && bb plugin build",
+    "typecheck": "tsc6 --noEmit -p tsconfig.json",
+    "test": "vitest run --config vitest.config.ts",
+    "check:package": "node scripts/verify-package.mjs",
+    "prepack": "npm run build && npm run check:package"
+  },
+  "files": [
+    "dist",
+    "src",
+    "scripts",
+    "styles.css",
+    "README.md",
+    "tsconfig.json",
+    "vitest.config.ts"
+  ],
+  "keywords": [
+    "bb-plugin",
+    "github"
+  ],
+  "devDependencies": {
+    "@get-bb/plugin-sdk": "0.4.21",
+    "@testing-library/react": "^16.3.2",
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "better-sqlite3": "12.10.0",
+    "cron-parser": "^5.5.0",
+    "hono": "^4.11.9",
+    "jsdom": "^29.0.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "sonner": "^1.7.4",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "vitest": "^4.1.1"
+  }
+}

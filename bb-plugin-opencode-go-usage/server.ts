@@ -390,15 +390,6 @@ export default async function plugin(bb: BbPluginApi) {
           "Usage:",
           "  bb opencode-go-usage [show] [--json] [--api-key <key>] [--base-url <url>]",
           "  bb opencode-go-usage status [--json]",
-          "",
-          "Fetches https://opencode.ai/zen/go/v1/usage with Authorization: Bearer <key>.",
-          "Key resolution (first match wins):",
-          "  1. --api-key <key>",
-          "  2. plugin settings  (bb plugin config opencode-go-usage set apiKey <key>)",
-          "  3. pi auth.json     (~/.pi/agent/auth.json → opencode-go, then opencode)",
-          "     respects $PI_CODING_AGENT_DIR, or ~/.pi/agent/auth.json by default",
-          "  4. env OPENCODE_API_KEY",
-          "Base URL defaults to https://opencode.ai/zen/go (--base-url overrides).",
         ].join("\n");
         return { exitCode: 0, stdout: usage };
       }

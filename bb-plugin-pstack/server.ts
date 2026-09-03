@@ -1,16 +1,18 @@
-// bb-plugin-pstack — BB port of poteto's pstack (cursor/plugins/pstack + pi-pstack)
+// bb-plugin-pstack — BB port of poteto's pstack (github.com/cursor/plugins/pstack)
 //
 // Provides:
-//  - 43+ skills (copied from pi-pstack, see skills/)
+//  - 45+ skills vendored from upstream cursor/plugins/pstack (see VENDOR.md)
 //  - poteto-mode: sticky instruction injection via bb.agents.contributeInstructions
-//  - native tools: pstack_todo, pstack_config, pstack_sessions, subagent
+//  - native tools: pstack_todo, pstack_config, pstack_sessions
+//    (subagent lives in the separate bb-plugin-simple-subagent plugin;
+//    pstack_config proxies to it via bb.sdk.plugins.callRpc)
 //  - CLI: bb pstack (todo, config, sessions, poteto, setup, status)
 //  - RPC + sidebar page for config/todo dashboard
 
 import { defineRpcContract, type BbPluginApi } from "@get-bb/plugin-sdk";
 import { z } from "zod";
 
-// ── pstack model roles (mirrors pi-pstack extensions/pstack/config.ts) ──
+// ── pstack model roles (mirrors upstream pstack setup-pstack role table) ──
 
 const ROLE_NAMES = [
   "feature, refactoring",
@@ -40,6 +42,53 @@ interface PstackConfig {
   roles: Record<string, RoleValue>;
 }
 
+interface ProviderEntry {
+  id: string;
+}
+
+interface ModelEntry {
+  id?: string;
+  model?: string;
+}
+
+interface ModelListing {
+  models?: ModelEntry[];
+  options?: ModelEntry[];
+}
+
+interface ThreadEntry {
+  id: string;
+  title: string | null;
+  updatedAt: number;
+}
+
+interface ThreadsResult {
+  threads: ThreadEntry[];
+}
+
+type KvListResult = Array<{ key: string; value: boolean }> | Record<string, boolean>;
+
+function extractModelEntries(listing: unknown): ModelEntry[] {
+  if (!listing || typeof listing !== "object") return [];
+  const record = listing as ModelListing;
+  if (Array.isArray(record.models)) return record.models;
+  if (Array.isArray(record.options)) return record.options;
+  return [];
+}
+
+function extractThreadEntries(result: unknown): ThreadEntry[] {
+  if (!result || typeof result !== "object") return [];
+  if (!("threads" in result)) return [];
+  const threads = (result as ThreadsResult).threads;
+  return Array.isArray(threads) ? threads : [];
+}
+
+function getModelId(entry: unknown): string | undefined {
+  if (!entry || typeof entry !== "object") return undefined;
+  const record = entry as ModelEntry;
+  return record.id ?? record.model;
+}
+
 function defaultConfig(): PstackConfig {
   return {
     version: 1,
@@ -47,7 +96,6 @@ function defaultConfig(): PstackConfig {
   };
 }
 
-const CONFIG_KV = "pstack:config";
 const POTETO_KV_PREFIX = "pstack:poteto:"; // + threadId
 const TODO_KV_PREFIX = "pstack:todo:"; // + threadId
 const POTETO_GLOBAL_KV = "pstack:poteto:global";
@@ -90,13 +138,6 @@ function parseConfig(raw: unknown): PstackConfig {
   return { version: 1, roles };
 }
 
-function modelsForRole(config: PstackConfig, role: string | undefined): string[] {
-  if (!role) return [];
-  const v = config.roles[role];
-  const arr = typeof v === "string" ? [v] : Array.isArray(v) ? v : [];
-  return arr.filter((m) => m !== "inherit-parent" && m !== "auto");
-}
-
 function isPotetoEnabled(global: boolean, perThread: boolean | undefined): boolean {
   if (perThread !== undefined) return perThread;
   return global;
@@ -120,14 +161,36 @@ function knownExternalWrite(command: string): string | undefined {
 export default async function plugin(bb: BbPluginApi) {
   bb.log.info("pstack loaded");
 
-  // ── Storage helpers (kv) ────────────────────────────────────────────
+  // ── Config: role→model mapping lives in bb-plugin-simple-subagent ──
+  // (the plugin that actually consumes it), so this proxies through it via
+  // cross-plugin RPC instead of keeping a second copy.
+  // Falls back to local defaults if that plugin isn't installed.
+
+  const SUBAGENT_PLUGIN_ID = "simple-subagent";
 
   async function readConfig(): Promise<PstackConfig> {
-    const raw = await bb.storage.kv.get<unknown>(CONFIG_KV);
-    return parseConfig(raw);
+    try {
+      const res = await bb.sdk.plugins.callRpc({
+        pluginId: SUBAGENT_PLUGIN_ID,
+        method: "config_get",
+        input: null,
+        outputSchema: z.object({ config: z.unknown() }),
+      });
+      return parseConfig(res.config);
+    } catch (e) {
+      bb.log.warn(`pstack_config: could not reach ${SUBAGENT_PLUGIN_ID} plugin, using defaults: ${e instanceof Error ? e.message : String(e)}`);
+      return defaultConfig();
+    }
   }
-  async function writeConfig(cfg: PstackConfig): Promise<void> {
-    await bb.storage.kv.set(CONFIG_KV, cfg);
+  async function writeConfig(role: string, value: RoleValue): Promise<PstackConfig> {
+    const input: Record<string, string | string[]> = Array.isArray(value) ? { role, models: value } : { role, model: value };
+    const res = await bb.sdk.plugins.callRpc({
+      pluginId: SUBAGENT_PLUGIN_ID,
+      method: "config_set",
+      input: input as never,
+      outputSchema: z.object({ config: z.unknown() }),
+    });
+    return parseConfig(res.config);
   }
 
   async function readPoteto(threadId?: string): Promise<{ enabled: boolean; globalEnabled: boolean }> {
@@ -172,10 +235,8 @@ export default async function plugin(bb: BbPluginApi) {
     globalPoteto = raw === true;
     // warm per-thread poteto cache so contributeInstructions stays sync after reload
     try {
-      const entries = (await bb.storage.kv.list(POTETO_KV_PREFIX)) as unknown as Array<{
-        key: string;
-        value: boolean;
-      }> | Record<string, boolean>;
+      const rawEntries: unknown = await bb.storage.kv.list(POTETO_KV_PREFIX);
+      const entries = rawEntries as KvListResult;
       if (Array.isArray(entries)) {
         for (const e of entries) {
           const id = e.key.replace(POTETO_KV_PREFIX, "");
@@ -187,11 +248,11 @@ export default async function plugin(bb: BbPluginApi) {
           if (id && id !== "global" && typeof v === "boolean") potetoCache.set(id, v);
         }
       }
-    } catch {
-      // list not critical
+    } catch (e) {
+      bb.log.debug(`pstack poteto cache warm failed (non-critical): ${e instanceof Error ? e.message : String(e)}`);
     }
-  } catch {
-    // ignore
+  } catch (e) {
+    bb.log.debug(`pstack poteto global warm failed: ${e instanceof Error ? e.message : String(e)}`);
   }
 
   bb.agents.contributeInstructions(({ threadId }) => {
@@ -263,36 +324,34 @@ export default async function plugin(bb: BbPluginApi) {
       if (params.action === "list-models") {
         let models: string[] = [];
         try {
-          const providers = (await bb.sdk.providers.list()) as unknown as Array<{ id: string }>;
-          for (const p of providers ?? []) {
+          const rawProviders: unknown = await bb.sdk.providers.list();
+          const providers: ProviderEntry[] = Array.isArray(rawProviders) ? (rawProviders as ProviderEntry[]) : [];
+          for (const p of providers) {
             try {
-              const listing = (await bb.sdk.providers.models({ providerId: p.id })) as unknown as {
-                models?: Array<{ id: string }>;
-                options?: Array<{ model?: string; id?: string }>;
-              };
-              const arr = listing.models ?? (listing as unknown as { options: Array<{ id: string }> }).options ?? [];
-              for (const m of arr as Array<{ id: string; model?: string }>) {
-                const mid = (m as { id?: string; model?: string }).id ?? (m as { model?: string }).model;
+              const rawListing: unknown = await bb.sdk.providers.models({ providerId: p.id });
+              const arr = extractModelEntries(rawListing);
+              for (const m of arr) {
+                const mid = getModelId(m);
                 if (mid) models.push(`${p.id}/${mid}`);
               }
-            } catch {
-              // provider may not expose models listing
+            } catch (e) {
+              bb.log.debug(`pstack_config list-models: provider ${p.id} models unavailable: ${e instanceof Error ? e.message : String(e)}`);
             }
           }
-        } catch {
-          // sdk not ready or no providers
+        } catch (e) {
+          bb.log.debug(`pstack_config list-models: providers unavailable: ${e instanceof Error ? e.message : String(e)}`);
         }
         const all = ["inherit-parent", ...models];
         return { content: [{ type: "text", text: all.join("\n") || "inherit-parent" }], details: { models: all } };
       }
-      const config = await readConfig();
       if (params.action === "set") {
         if (!params.role || (!params.model && !params.models?.length)) {
           throw new Error("pstack_config set requires role plus model or models.");
         }
-        config.roles[params.role] = params.models?.length ? params.models : params.model!;
-        await writeConfig(config);
+        const config = await writeConfig(params.role, params.models?.length ? params.models : params.model!);
+        return { content: [{ type: "text", text: JSON.stringify(config, null, 2) }], details: config };
       }
+      const config = await readConfig();
       return { content: [{ type: "text", text: JSON.stringify(config, null, 2) }], details: config };
     },
   });
@@ -307,11 +366,11 @@ export default async function plugin(bb: BbPluginApi) {
     parameters: z.object({ action: z.enum(["list"]) }),
     async execute(_params, ctx) {
       try {
-        const result = await bb.sdk.threads.list({
+        const result: unknown = await bb.sdk.threads.list({
           projectId: ctx.projectId,
           limit: 50,
         } as unknown as Record<string, unknown>);
-        const threads = (result as unknown as { threads: Array<{ id: string; title: string | null; updatedAt: number }> }).threads ?? [];
+        const threads = extractThreadEntries(result);
         const lines = threads.map((t) => `${t.id}  ${t.title ?? "(untitled)"}  ${new Date(t.updatedAt).toISOString()}`);
         return {
           content: [{ type: "text", text: lines.join("\n") || "No threads for this project." }],
@@ -321,132 +380,6 @@ export default async function plugin(bb: BbPluginApi) {
         const msg = e instanceof Error ? e.message : String(e);
         return { content: [{ type: "text", text: `Failed to list threads: ${msg}` }], isError: true };
       }
-    },
-  });
-
-  // ── subagent tool (BB-native via threads.spawn) ────────────────────
-  // Mirrors pi-pstack's subagent: single task, tasks[] parallel, chain sequential.
-  // Agents should prefer this over raw bb thread CLI for structured delegation.
-  bb.agents.registerTool({
-    name: "subagent",
-    description:
-      "Delegate work to one or more isolated subagents (BB child threads). Each subagent runs as a separate thread and returns only its final result. Supports single task, parallel tasks[], and chain sequential modes. Use role for model selection via pstack_config, or model for a one-off provider/model override.",
-    presentation: {
-      label: { pending: "Delegating to subagent", completed: "Subagent completed" },
-    },
-    parameters: z.object({
-      task: z.string().optional(),
-      tasks: z.array(z.string()).optional(),
-      agent: z.string().optional(),
-      role: z.string().optional(),
-      model: z.string().optional(),
-      chain: z.array(z.string()).optional(),
-    }),
-    async execute(params, ctx) {
-      const parentThreadId = ctx.threadId;
-      const projectId = ctx.projectId;
-
-      const allTasks: string[] = [];
-      if (params.tasks?.length) allTasks.push(...params.tasks);
-      else if (params.task) allTasks.push(params.task);
-      else if (params.chain?.length) allTasks.push(params.chain[0]!);
-      else throw new Error("subagent requires task, tasks, or chain");
-
-      if (allTasks.length > 8) throw new Error("subagent allows at most 8 tasks");
-
-      const config = await readConfig();
-      const roleModels = modelsForRole(config, params.role);
-      const preferredModel = params.model ?? roleModels[0];
-
-      // Resolve provider/model for child threads
-      let spawnProviderId: string | undefined;
-      let spawnModel: string | undefined;
-      if (preferredModel && preferredModel !== "inherit-parent") {
-        const slash = preferredModel.indexOf("/");
-        if (slash > 0) {
-          spawnProviderId = preferredModel.slice(0, slash);
-          spawnModel = preferredModel.slice(slash + 1);
-        } else {
-          spawnModel = preferredModel;
-        }
-      }
-      // Fallback: inherit parent's execution options
-      if (!spawnProviderId || !spawnModel) {
-        try {
-          const parent = (await bb.sdk.threads.get({ threadId: parentThreadId })) as unknown as {
-            providerId?: string;
-            model?: string;
-          };
-          spawnProviderId = spawnProviderId ?? parent.providerId;
-          spawnModel = spawnModel ?? parent.model;
-        } catch {
-          // leave undefined — server will apply project defaults
-        }
-      }
-
-      const agentHint = params.agent ? ` (agent: ${params.agent})` : "";
-      const childIds: string[] = [];
-      const results: string[] = [];
-
-      // Spawn children (concurrency capped at 4 for parallel mode)
-      const spawnOne = async (task: string, idx: number): Promise<void> => {
-        const title = `pstack:${params.agent ?? "subagent"} #${idx + 1}`;
-        const prompt = params.agent === "poteto-agent"
-          ? `You are running as poteto-agent. Read skill://poteto-mode in full before any work, including its inline Principles index.\n\nTask: ${task}`
-          : params.agent === "comment-sicko"
-            ? `You are Comment Sicko (read-only comment reviewer). ${task}`
-            : task;
-
-        const spawnArgs: Record<string, unknown> = {
-          projectId,
-          parentThreadId,
-          title,
-          prompt,
-        };
-        if (spawnProviderId) spawnArgs.providerId = spawnProviderId;
-        if (spawnModel) spawnArgs.model = spawnModel;
-
-        const child = (await bb.sdk.threads.spawn(spawnArgs as never)) as unknown as { id: string };
-        childIds.push(child.id);
-
-        // Wait for idle (up to 10 minutes per child)
-        try {
-          await bb.sdk.threads.wait({ threadId: child.id, status: "idle", timeoutMs: 600_000 });
-          const out = (await bb.sdk.threads.output({ threadId: child.id })) as unknown as { text?: string; output?: string };
-          const text = (out as { text?: string }).text ?? (out as { output?: string }).output ?? "(no output)";
-          results.push(`[subagent ${idx + 1} ${child.id}${agentHint}]\n${text}`);
-        } catch (e) {
-          const msg = e instanceof Error ? e.message : String(e);
-          results.push(`[subagent ${idx + 1} ${child.id} — wait failed: ${msg}]`);
-        }
-      };
-
-      if (params.chain?.length) {
-        // Sequential chain with {previous} interpolation
-        let previous = "";
-        for (let i = 0; i < params.chain.length; i++) {
-          const raw = params.chain[i]!;
-          const task = raw.replaceAll("{previous}", previous);
-          await spawnOne(task, i);
-          previous = results[results.length - 1] ?? "";
-        }
-      } else if (allTasks.length === 1) {
-        await spawnOne(allTasks[0]!, 0);
-      } else {
-        // Parallel — cap concurrency 4
-        const pool = 4;
-        for (let i = 0; i < allTasks.length; i += pool) {
-          const batch = allTasks.slice(i, i + pool);
-          await Promise.all(batch.map((t, j) => spawnOne(t, i + j)));
-        }
-      }
-
-      const summary = results.join("\n\n---\n\n") || "(no subagent output)";
-      const details = { childIds, agent: params.agent, role: params.role, model: preferredModel };
-      return {
-        content: [{ type: "text", text: summary }],
-        details,
-      };
     },
   });
 
@@ -677,20 +610,22 @@ export default async function plugin(bb: BbPluginApi) {
         if (action === "list-models" || action === "list_model" || action === "models") {
           let models: string[] = [];
           try {
-            const providers = (await bb.sdk.providers.list()) as unknown as Array<{ id: string }>;
-            for (const p of providers ?? []) {
+            const rawProviders: unknown = await bb.sdk.providers.list();
+            const providers: ProviderEntry[] = Array.isArray(rawProviders) ? (rawProviders as ProviderEntry[]) : [];
+            for (const p of providers) {
               try {
-                const listing = (await bb.sdk.providers.models({ providerId: p.id })) as unknown as {
-                  models?: Array<{ id: string }>;
-                };
-                const arr = listing.models ?? [];
-                for (const m of arr as Array<{ id: string }>) if (m.id) models.push(`${p.id}/${m.id}`);
-              } catch {
-                // skip
+                const rawListing: unknown = await bb.sdk.providers.models({ providerId: p.id });
+                const arr = extractModelEntries(rawListing);
+                for (const m of arr) {
+                  const mid = getModelId(m);
+                  if (mid) models.push(`${p.id}/${mid}`);
+                }
+              } catch (e) {
+                bb.log.debug(`pstack cli list-models: provider ${p.id} unavailable: ${e instanceof Error ? e.message : String(e)}`);
               }
             }
-          } catch {
-            // no sdk
+          } catch (e) {
+            bb.log.debug(`pstack cli list-models: providers unavailable: ${e instanceof Error ? e.message : String(e)}`);
           }
           const all = ["inherit-parent", ...models];
           return reply({ models: all }, all.join("\n") || "inherit-parent");
@@ -700,23 +635,18 @@ export default async function plugin(bb: BbPluginApi) {
           const modelArg = rest[1];
           const modelsFlag = getFlag("--models");
           if (!role) return { exitCode: 1, stderr: "bb pstack config set requires <role> <model>" };
-          const config = await readConfig();
+          let value: RoleValue;
           if (modelsFlag) {
-            const models = modelsFlag.split(",").map((s) => s.trim()).filter(Boolean);
-            config.roles[role] = models;
+            value = modelsFlag.split(",").map((s) => s.trim()).filter(Boolean);
           } else if (modelArg) {
             // also handle remaining rest as single model with slash
             const model = [modelArg, ...rest.slice(2)].join(" ").trim() || modelArg;
             // if modelsFlag not used but rest has extra, treat as models list
-            if (rest.length > 2) {
-              config.roles[role] = rest.slice(1);
-            } else {
-              config.roles[role] = model;
-            }
+            value = rest.length > 2 ? rest.slice(1) : model;
           } else {
             return { exitCode: 1, stderr: "bb pstack config set requires <role> <model> or --models <m1,m2>" };
           }
-          await writeConfig(config);
+          const config = await writeConfig(role, value);
           return reply(config, JSON.stringify(config, null, 2));
         }
         return { exitCode: 1, stderr: `Unknown config action "${action}". Usage: bb pstack config <get|list-models|set> ...` };
@@ -730,8 +660,8 @@ export default async function plugin(bb: BbPluginApi) {
           const args: Record<string, unknown> = { limit: 50 };
           if (pid) args.projectId = pid;
           else if (ctx.projectId) args.projectId = ctx.projectId;
-          const result = await bb.sdk.threads.list(args as never);
-          const threads = (result as unknown as { threads: Array<{ id: string; title: string | null; updatedAt: number }> }).threads ?? [];
+          const rawResult: unknown = await bb.sdk.threads.list(args as never);
+          const threads = extractThreadEntries(rawResult);
           const lines = threads.map((t) => `${t.id}  ${t.title ?? "(untitled)"}  ${new Date(t.updatedAt).toISOString()}`);
           const text = lines.join("\n") || "No threads.";
           return reply({ threads, projectId: pid ?? ctx.projectId ?? null }, json ? JSON.stringify({ threads }, null, 2) : text);
@@ -746,20 +676,22 @@ export default async function plugin(bb: BbPluginApi) {
         const config = await readConfig();
         let available: string[] = [];
         try {
-          const providers = (await bb.sdk.providers.list()) as unknown as Array<{ id: string }>;
-          for (const p of providers ?? []) {
+          const rawProviders: unknown = await bb.sdk.providers.list();
+          const providers: ProviderEntry[] = Array.isArray(rawProviders) ? (rawProviders as ProviderEntry[]) : [];
+          for (const p of providers) {
             try {
-              const listing = (await bb.sdk.providers.models({ providerId: p.id })) as unknown as {
-                models?: Array<{ id: string }>;
-              };
-              const arr = listing.models ?? [];
-              for (const m of arr as Array<{ id: string }>) if (m.id) available.push(`${p.id}/${m.id}`);
-            } catch {
-              // skip
+              const rawListing: unknown = await bb.sdk.providers.models({ providerId: p.id });
+              const arr = extractModelEntries(rawListing);
+              for (const m of arr) {
+                const mid = getModelId(m);
+                if (mid) available.push(`${p.id}/${mid}`);
+              }
+            } catch (e) {
+              bb.log.debug(`pstack setup: provider ${p.id} models unavailable: ${e instanceof Error ? e.message : String(e)}`);
             }
           }
-        } catch {
-          // no providers
+        } catch (e) {
+          bb.log.debug(`pstack setup: providers unavailable: ${e instanceof Error ? e.message : String(e)}`);
         }
         const choices = ["inherit-parent", ...available];
         const text = [

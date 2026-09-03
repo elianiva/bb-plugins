@@ -8,7 +8,7 @@
   },
   "bb": {
     "name": "Pstack",
-    "description": "Port of poteto's pstack — 40+ skills, poteto-mode, parallel subagents, and BB-native todo/config tools. Based on github.com/cursor/plugins/pstack and pi-pstack.",
+    "description": "BB port of poteto's pstack (cursor/plugins/pstack) — 40+ skills, poteto-mode, and BB-native todo/config tools. Parallel subagents via bb-plugin-simple-subagent.",
     "branding": {
       "icon": "Zap"
     },

@@ -2,9 +2,7 @@
 
 BB port of [poteto's pstack](https://github.com/cursor/plugins/tree/main/pstack) — the same rigorous engineering discipline from Cursor, now in BB.
 
-Based on:
-- **Upstream:** [cursor/plugins/pstack](https://github.com/cursor/plugins/tree/main/pstack) (MIT)
-- **Pi adaptation:** [pi-pstack](https://github.com/kkgogogo17/pi-pstack) (~/.pi/agent/extensions/pi-pstack) — 43 skills ported, poteto-mode extension, subagents
+Based on [cursor/plugins/pstack](https://github.com/cursor/plugins/tree/main/pstack) (MIT, Copyright 2026 Lauren Tan). See [VENDOR.md](VENDOR.md) and [LICENSE](LICENSE).
 
 ## What you get
 
@@ -12,9 +10,9 @@ Based on:
 - **Poteto mode** — sticky instruction injection via `bb.agents.contributeInstructions`. Toggle with `bb pstack poteto on|off` (per-thread or `--global`), or `bb pstack poteto "your task"` to enable and hint. Agents read `skill://poteto-mode` and its Principles index before planning.
 - **Native tools** (visible to agents):
   - `pstack_todo` — checklist (`get|set|add|complete`), persisted per thread in `bb.storage.kv`
-  - `pstack_config` — role→model mapping (`get|list-models|set`), global `pstack:config`
+  - `pstack_config` — role→model mapping (`get|list-models|set`); a thin proxy over [bb-plugin-simple-subagent](../bb-plugin-simple-subagent)'s config, which is where the roles actually live
   - `pstack_sessions` — lists BB threads for the current project
-  - `subagent` — delegates to BB child threads (`task`, `tasks[]`, `chain` with `{previous}`, `agent: poteto-agent|comment-sicko`, `role`, `model`). Concurrency capped at 4, max 8 tasks.
+  - `subagent` is provided by the separate [bb-plugin-simple-subagent](../bb-plugin-simple-subagent) plugin (install it alongside pstack) — delegates to BB child threads (`task`, `tasks[]`, `chain` with `{previous}`, `agent`, `role`, `model`). Concurrency capped at 4, max 8 tasks.
 - **CLI:** `bb pstack`
   ```
   bb pstack status [--json] [--thread <id>]
@@ -29,11 +27,11 @@ Based on:
 
 ## Subagents
 
-Poteto delegates run as BB child threads (`bb.sdk.threads.spawn` with `parentThreadId`). `poteto-agent` reads `skill://poteto-mode` in full before work; `comment-sicko` is a read-only comment reviewer. Configure delegation models via `bb pstack config` or `pstack_config` tool — unconfigured roles inherit the parent's provider/model.
+Poteto delegates run as BB child threads via the `subagent` tool, registered by the separate [bb-plugin-simple-subagent](../bb-plugin-simple-subagent) plugin — install both. `poteto-agent` reads `skill://poteto-mode` in full before work; `comment-sicko` is a read-only comment reviewer. Configure delegation models via `bb pstack config` or the `pstack_config` tool (both proxy to simple-subagent's config) — unconfigured roles inherit the parent's provider/model.
 
 ## Safety
 
-The server logs destructive command patterns (git push, gh pr mutations, infrastructure, recursive deletes) for diagnostics; actual blocking is at the provider permission layer, matching pi-pstack's `knownExternalWrite` guard.
+The server logs destructive command patterns (git push, gh pr mutations, infrastructure, recursive deletes) for diagnostics; actual blocking is at the provider permission layer, matching upstream's `knownExternalWrite` guard.
 
 ## Install
 
@@ -67,10 +65,14 @@ Or via the `pstack_config` tool from inside an agent.
 
 ## Skills
 
-All skills are the pi-pstack versions (which already adapted Cursor's `subagent_type` and `~/.cursor/rules/pstack-models.mdc` references to `subagent` tool and `~/.pi/agent/pstack/models.json`). For BB they resolve to BB's `subagent` tool and KV-backed `pstack:config`.
+All 45 skills vendored from upstream (see [VENDOR.md](VENDOR.md)), with minimal BB adaptations:
 
-Playbooks live at `skills/poteto-mode/playbooks/` (investigation, bug-fix, perf-issue, feature, refactoring, prototype, shipping, babysit, etc.) and are selected by `poteto-mode`'s routing.
+- `subagent_type: generalPurpose` → `agent: poteto-agent` via the `subagent` tool (from [bb-plugin-simple-subagent](../bb-plugin-simple-subagent))
+- Cursor model slugs → `inherit-parent` defaults via `pstack_config` / `bb pstack config`
+- `~/.cursor/rules/pstack-models.mdc` → BB storage (`bb.storage.kv` via `simple-subagent`)
+
+BB adds `poteto-agent`, `comment-sicko`, and `example-todos` as skills (upstream ships them as `agents/`). Playbooks live at `skills/poteto-mode/playbooks/` (investigation, bug-fix, perf-issue, feature, refactoring, prototype, shipping, babysit, etc.) and are selected by `poteto-mode`'s routing.
 
 ## License
 
-MIT — derived from Cursor's pstack (MIT). See upstream LICENSE.
+MIT — see [LICENSE](LICENSE) (upstream MIT, Copyright 2026 Lauren Tan).

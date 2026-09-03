@@ -97,18 +97,16 @@ function createWindowRow(w: WindowUsage): HTMLDivElement {
   return row;
 }
 
-function renderUsageSection(container: HTMLElement, data: UsageResponse, source?: string, cached?: boolean): void {
+function renderUsageSection(container: HTMLElement, data: UsageResponse, cached?: boolean): void {
   container.replaceChildren();
 
   const headerRow = el("div", "mb-3 flex items-start justify-between gap-2");
   const titleBlock = el("div", "flex-1 min-w-0");
   const heading = el("h3", "text-sm font-semibold", "OpenCode Go");
   heading.id = "opencode-go-heading";
-  const subtitle = el("p", "mt-1 text-xs text-muted-foreground");
-  subtitle.textContent = source ? `via ${source}` : "via pi auth.json / plugin settings";
   const meta = el("p", "mt-1 text-xs text-muted-foreground");
-  meta.textContent = `Fetched ${new Date(data.fetchedAt).toLocaleString()}${cached ? " · cached (60s)" : ""} · ${data.endpoint}`;
-  titleBlock.append(heading, subtitle, meta);
+  meta.textContent = `Updated ${new Date(data.fetchedAt).toLocaleTimeString()}${cached ? " · cached" : ""}`;
+  titleBlock.append(heading, meta);
 
   const refreshBtn = el("button", "inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md border border-input bg-background px-2.5 text-xs font-medium hover:bg-accent hover:text-accent-foreground");
   refreshBtn.type = "button";
@@ -126,10 +124,7 @@ function renderUsageSection(container: HTMLElement, data: UsageResponse, source?
   windowsInner.append(createWindowRow(data.usage.rolling), createWindowRow(data.usage.weekly), createWindowRow(data.usage.monthly));
   windowsWrap.appendChild(windowsInner);
 
-  const footer = el("div", "mt-3 pl-6 text-xs text-muted-foreground");
-  footer.textContent = cached ? "Cached (60s)" : "";
-
-  container.append(headerRow, windowsWrap, footer);
+  container.append(headerRow, windowsWrap);
 }
 
 function renderError(container: HTMLElement, message: string, source?: string): void {
@@ -138,7 +133,7 @@ function renderError(container: HTMLElement, message: string, source?: string): 
   const err = el("p", "mt-2 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive");
   err.textContent = message + (source ? ` [${source}]` : "");
   const hint = el("p", "mt-2 text-xs text-muted-foreground");
-  hint.textContent = "Set key: bb plugin config opencode-go-usage set apiKey <key> — or /login opencode-go in pi — then reload plugin.";
+  hint.textContent = "Set an API key in plugin settings and reload.";
   container.append(heading, err, hint);
 }
 
@@ -154,7 +149,7 @@ async function refreshAndRender(container: HTMLElement, signal?: AbortSignal): P
       renderError(container, rpc.error ?? "Failed to fetch usage", rpc.source);
       return;
     }
-    if (rpc.data) renderUsageSection(container, rpc.data, rpc.source, rpc.cached);
+    if (rpc.data) renderUsageSection(container, rpc.data, rpc.cached);
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     renderError(container, msg);
