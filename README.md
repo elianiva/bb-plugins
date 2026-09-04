@@ -2,8 +2,6 @@
 
 A collection of [BB](https://getbb.app) plugins built for personal use. Each subdirectory is a standalone plugin with its own `package.json` and BB manifest. Install one or install all via `.bb/plugins.json`.
 
-> Originally a private scratch repo for syncing between machines — now public so others can use, fork, and reference the plugins.
-
 ## Plugins
 
 | Plugin | What it does |
