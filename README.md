@@ -8,7 +8,7 @@ Each plugin documents itself in its own directory. One line each here.
 
 | Plugin | What it does |
 |--------|--------------|
-| [bocchi](bb-plugin-bocchi/) | Cute pink theme for BB. |
+| [bocchi](bb-plugin-bocchi/) | Cute pink theme for BB, based on [elianiva.com](https://elianiva.com). |
 | [github-plus](bb-plugin-github-plus/) | GitHub issues and pull requests inside BB. Forked from the original by Tom Swift. Requires `gh` auth. |
 | [pstack](bb-plugin-pstack/) | Poteto agent skills plus the `bb pstack` CLI. |
 | [reasoning-split](bb-plugin-reasoning-split/) | Reasoning level as its own dropdown beside the model picker. |
