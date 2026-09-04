@@ -15,7 +15,7 @@ A collection of [BB](https://getbb.app) plugins built for personal use. Each sub
 | [bb-plugin-simple-subagent](bb-plugin-simple-subagent/) | **Simple Subagent** — minimal delegation primitive. Registers one tool, `subagent`, for spawning isolated child threads: single `task`, parallel `tasks[]` (cap 4), or sequential `chain` with `{previous}` interpolation. Split out of `pstack` so other plugins can delegate without pulling the full skill set. |
 | [bb-plugin-send-capture](bb-plugin-send-capture/) | **Send Capture** — agents send verification photos inline via the `send_capture` tool, plus a bundled `send-capture` skill covering the `agent-browser` capture flow (session isolation, screenshots, WebM recordings, opt-in remote share via `bb connect`). Video returns a file path reference until inline video rendering lands. |
 | [bb-plugin-trajectory](bb-plugin-trajectory/) | **Trajectory** — DeepSeek-harness-style debug view. Full timeline of agent operations (turns, tool calls, file edits, token usage) for inspecting what an agent did. |
-| [bb-sidebar](bb-sidebar/) | **Sidebar** — vendored fork of BB Sidebar (git submodule, not indexed in `.bb/plugins.json`). Stable thread list with manual ordering, snooze, settle, and bulk actions. |
+| [bb-sidebar](bb-sidebar/) | **Sidebar** — stable thread list with manual ordering, snooze, settle, and bulk actions. |
 
 ## Install
 
