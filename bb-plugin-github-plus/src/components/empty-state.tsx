@@ -9,7 +9,7 @@ export function EmptyState({
 }) {
   return (
     <div
-      className="flex flex-col items-center justify-center gap-1 py-6 text-center"
+      className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-card/50 px-4 py-8 text-center"
       role={onRetry === undefined ? "status" : "alert"}
       aria-live={onRetry === undefined ? "polite" : "assertive"}
     >
