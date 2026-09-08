@@ -66,8 +66,6 @@ interface ThreadsResult {
   threads: ThreadEntry[];
 }
 
-type KvListResult = Array<{ key: string; value: boolean }> | Record<string, boolean>;
-
 function extractModelEntries(listing: unknown): ModelEntry[] {
   if (!listing || typeof listing !== "object") return [];
   const record = listing as ModelListing;
@@ -233,19 +231,18 @@ export default async function plugin(bb: BbPluginApi) {
   try {
     const raw = await bb.storage.kv.get<boolean>(POTETO_GLOBAL_KV);
     globalPoteto = raw === true;
-    // warm per-thread poteto cache so contributeInstructions stays sync after reload
+    // warm per-thread poteto cache so contributeInstructions stays sync after reload.
+    // kv.list returns key names (string[]), so fetch each value individually.
     try {
-      const rawEntries: unknown = await bb.storage.kv.list(POTETO_KV_PREFIX);
-      const entries = rawEntries as KvListResult;
-      if (Array.isArray(entries)) {
-        for (const e of entries) {
-          const id = e.key.replace(POTETO_KV_PREFIX, "");
-          if (id && id !== "global" && typeof e.value === "boolean") potetoCache.set(id, e.value);
-        }
-      } else if (entries && typeof entries === "object") {
-        for (const [k, v] of Object.entries(entries as Record<string, unknown>)) {
-          const id = k.replace(POTETO_KV_PREFIX, "");
-          if (id && id !== "global" && typeof v === "boolean") potetoCache.set(id, v);
+      const keys = await bb.storage.kv.list(POTETO_KV_PREFIX);
+      for (const key of keys) {
+        const id = key.replace(POTETO_KV_PREFIX, "");
+        if (!id || id === "global") continue;
+        try {
+          const v = await bb.storage.kv.get<boolean>(key);
+          if (typeof v === "boolean") potetoCache.set(id, v);
+        } catch (e) {
+          bb.log.debug(`pstack poteto cache warm skipped ${id}: ${e instanceof Error ? e.message : String(e)}`);
         }
       }
     } catch (e) {
@@ -286,7 +283,9 @@ export default async function plugin(bb: BbPluginApi) {
       if (params.action === "set") {
         items = params.items ?? [];
         await writeTodos(threadId, items);
-        potetoCache.set(threadId, true);
+        // persist so the enablement survives reloads, not just in-memory cache
+        await setPoteto(threadId, true);
+        if (threadId) potetoCache.set(threadId, true);
       } else if (params.action === "add" && params.item) {
         items = [...items, params.item];
         await writeTodos(threadId, items);
