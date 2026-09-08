@@ -9,6 +9,8 @@
     { "name": "reasoning-split", "source": "./bb-plugin-reasoning-split" },
     { "name": "send-capture", "source": "./bb-plugin-send-capture" },
     { "name": "simple-subagent", "source": "./bb-plugin-simple-subagent" },
-    { "name": "trajectory", "source": "./bb-plugin-trajectory" }
+    { "name": "trajectory", "source": "./bb-plugin-trajectory" },
+    { "name": "teto", "source": "./bb-plugin-teto" },
+    { "name": "centered-home", "source": "./bb-plugin-centered-home" }
   ]
 }

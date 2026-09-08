@@ -15,6 +15,8 @@ Each plugin documents itself in its own directory. One line each here.
 | [send-capture](bb-plugin-send-capture/) | Agents send verification screenshots and recordings inline. |
 | [simple-subagent](bb-plugin-simple-subagent/) | Minimal `subagent` tool for spawning child threads. |
 | [trajectory](bb-plugin-trajectory/) | Timeline view of agent turns, tool calls, edits, and tokens. |
+| [teto](bb-plugin-teto/) | Kasane Teto paces the BB corner, walking left and right and doing nothing. |
+| [centered-home](bb-plugin-centered-home/) | Centers the new-thread homepage composer with a time-based greeting above it. |
 | [sidebar](bb-sidebar/) | Stable thread list with ordering, snooze, settle, and bulk actions. Forked from [yusuf8834/bb-sidebar](https://github.com/yusuf8834/bb-sidebar). |
 
 ## Install
