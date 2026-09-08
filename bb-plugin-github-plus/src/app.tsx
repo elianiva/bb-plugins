@@ -272,12 +272,12 @@ function LinkErrorNotice({
   return (
     <div
       role="alert"
-      className="flex items-center justify-between gap-2 border-b border-border px-2 py-1.5 text-[11px] text-red-600 dark:text-red-400"
+      className="flex items-center justify-between gap-2 border-b border-border px-3 py-2 text-[11px] text-red-600 dark:text-red-400"
     >
       <span>Could not load linked threads: {error}</span>
       <button
         type="button"
-        className="shrink-0 border border-border px-2 py-0.5 text-[11px] font-medium text-foreground hover:bg-accent"
+        className="shrink-0 rounded-md border border-border px-2 py-0.5 text-[11px] font-medium text-foreground hover:bg-accent"
         onClick={onRetry}
       >
         Retry links
@@ -496,7 +496,7 @@ function ThreadPills({ links }: { links: ThreadLink[] | undefined }) {
             event.stopPropagation();
             navigate.toThread(link.threadId);
           }}
-          className="inline-flex items-center gap-1 border border-border px-1 py-0 text-[10px] font-medium tracking-tight text-muted-foreground hover:bg-accent hover:text-foreground"
+          className="inline-flex items-center gap-1 rounded-full border border-border px-1.5 py-0.5 text-[10px] font-medium tracking-tight text-muted-foreground hover:bg-accent hover:text-foreground"
         >
           <span className="size-1 rounded-full bg-foreground" aria-hidden="true" />
           agent{links.length > 1 ? ` ${index + 1}` : ""}
@@ -671,14 +671,14 @@ function FilterBar({
             : undefined
         }
         placeholder={placeholder ?? "Filter — is:open assignee:@me label:bug, or plain text"}
-        className="flex h-7 w-full border border-input bg-transparent px-2 py-1 pr-7 text-xs tracking-tight placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        className="flex h-8 w-full rounded-lg border border-input bg-card px-3 py-1 pr-8 text-xs tracking-tight shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         spellCheck={false}
         autoComplete="off"
       />
       {value.length > 0 ? (
         <button
           type="button"
-          className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-0.5 text-muted-foreground hover:text-foreground"
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-muted-foreground hover:text-foreground"
           onMouseDown={(event) => {
             event.preventDefault();
             onChange("");
@@ -694,7 +694,7 @@ function FilterBar({
         <div
           id={suggestionListId}
           role="listbox"
-          className="absolute left-0 right-0 top-full z-50 mt-1 max-h-72 overflow-y-auto border border-border bg-popover py-1"
+          className="absolute left-0 right-0 top-full z-50 mt-1 max-h-72 overflow-hidden overflow-y-auto rounded-lg border border-border bg-popover p-1 shadow-md"
         >
           {suggestions.map((suggestion, index) => (
             <button
@@ -703,7 +703,7 @@ function FilterBar({
               role="option"
               aria-selected={index === active}
               key={suggestion.insert}
-              className={`flex w-full items-center gap-2 px-2 py-1 text-left text-xs ${
+              className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs ${
                 index === active
                   ? "bg-accent text-accent-foreground"
                   : "text-popover-foreground"
@@ -835,7 +835,7 @@ function RowMenu({ item }: { item: Item }) {
         <Button
           size="icon"
           variant="ghost"
-          className="size-6 text-muted-foreground"
+          className="size-6 rounded-full text-muted-foreground"
           onClick={(event) => event.stopPropagation()}
           aria-label={`More actions for ${item.kind === "pr" ? "pull request" : "issue"} #${item.number}`}
         >
@@ -898,7 +898,7 @@ function ItemRow({
   const busy = openingKey === `${item.repo}#${item.number}`;
   return (
     <div
-      className="flex min-h-7 items-center gap-2 border-b border-border px-2 py-1 last:border-b-0 hover:bg-accent/40 @[48rem]:gap-2"
+      className="flex min-h-7 items-center gap-2 border-b border-border px-3 py-2.5 last:border-b-0 hover:bg-accent/50 @[48rem]:gap-2"
     >
       <span className="hidden shrink-0 font-mono text-[11px] tabular-nums text-muted-foreground @[48rem]:block @[48rem]:w-11">
         #{item.number}
@@ -937,7 +937,7 @@ function ItemRow({
         <Button
           size="sm"
           variant="outline"
-          className="h-6 px-1.5 text-[11px]"
+          className="h-6 rounded-full px-3 text-[11px]"
           disabled={openingKey !== null}
           onClick={(event) => {
             event.stopPropagation();
@@ -1058,8 +1058,8 @@ function ItemsTable({
   }
 
   return (
-    <div className="@container border-y border-border bg-transparent">
-      <div className="hidden items-center gap-2 border-b border-border px-2 py-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground @[48rem]:flex">
+    <div className="@container overflow-hidden rounded-xl border border-border bg-card">
+      <div className="hidden items-center gap-2 border-b border-border bg-muted/50 px-3 py-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground @[48rem]:flex">
         <span className="w-11 shrink-0">ID</span>
         <span className="min-w-0 flex-1">Title</span>
         <span className="w-16 shrink-0">Assignee</span>
@@ -1099,7 +1099,7 @@ function PageControls({
   const end = Math.min((page + 1) * pageSize, total);
   const pageCount = pageCountProp ?? Math.max(1, Math.ceil(total / pageSize));
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-2 py-1.5">
+    <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border bg-muted/50 px-3 py-2">
       <span className="text-[11px] tracking-tight text-muted-foreground">
         Showing {start}–{end} of {total}
       </span>
@@ -1511,7 +1511,7 @@ function IssueDetailView({
   return (
     <div className="flex flex-col gap-2">
       <LinkErrorNotice error={linksError} onRetry={retryLinks} />
-      <div className="flex items-center gap-1 border-b border-border px-2 py-1 text-[11px] text-muted-foreground">
+      <div className="flex items-center gap-1 rounded-lg border border-border bg-card px-3 py-2 text-[11px] text-muted-foreground">
         <Button size="sm" variant="ghost" className="h-6 px-1.5" onClick={onBack}>
           ← Issues
         </Button>
@@ -1524,7 +1524,7 @@ function IssueDetailView({
         </SafeUrlLink>
       </div>
 
-      <div className="flex items-start gap-2 px-2 py-1">
+      <div className="flex items-start gap-2 px-3 py-2">
         <h2 className="min-w-0 flex-1 text-sm font-semibold leading-tight tracking-tight text-foreground">
           {detail.title}{" "}
           <span className="font-normal text-muted-foreground">
@@ -1542,15 +1542,15 @@ function IssueDetailView({
 
       <div className="flex flex-col gap-2 lg:flex-row lg:gap-2">
         <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <div className="border-y border-border">
-            <div className="flex items-center gap-2 border-b border-border px-2 py-1 text-[11px] text-muted-foreground">
+          <div className="overflow-hidden rounded-xl border border-border bg-card">
+            <div className="flex items-center gap-2 border-b border-border bg-muted/50 px-3 py-2 text-[11px] text-muted-foreground">
               <Avatar login={detail.author} size="size-4" />
               <span className="font-medium text-foreground">
                 {detail.author}
               </span>
               opened · {relativeTime(detail.updatedAt)}
             </div>
-            <div className="p-2">
+            <div className="p-3">
               {detail.body.length > 0 ? (
                 <Markdown content={detail.body} className="text-xs" />
               ) : (
@@ -1562,7 +1562,7 @@ function IssueDetailView({
           </div>
 
           {detail.comments.length > 0 ? (
-            <div className="flex flex-col gap-2 px-2">
+            <div className="flex flex-col gap-2 px-3">
               <h3 className="text-[11px] font-medium tracking-wide text-muted-foreground">
                 Activity · {detail.comments.length}
               </h3>
@@ -1584,7 +1584,7 @@ function IssueDetailView({
             </div>
           ) : null}
 
-          <div className="flex flex-col gap-1 px-2">
+          <div className="flex flex-col gap-1 px-3">
             <Textarea
               value={comment}
               onChange={(event) => setComment(event.target.value)}
@@ -1603,7 +1603,7 @@ function IssueDetailView({
           </div>
         </div>
 
-        <aside className="flex w-full shrink-0 flex-col gap-3 border-t border-border px-2 py-2 lg:w-56 lg:border-l lg:border-t-0">
+        <aside className="flex w-full shrink-0 flex-col gap-3 border-t border-border p-3 lg:w-56 lg:border-l lg:border-t-0">
           <div className="flex flex-col gap-1">
             <SidebarHeading>Status</SidebarHeading>
             <Select
@@ -1752,10 +1752,10 @@ function ChecksSection({ checks }: { checks: PullCheck[] }) {
   const passing = checks.filter((check) => check.status === "success").length;
   const failing = checks.filter((check) => check.status === "failure").length;
   return (
-    <div className="border-y border-border">
+    <div className="overflow-hidden rounded-lg border border-border bg-card">
       <button
         type="button"
-        className="flex w-full items-center gap-2 px-2 py-1 text-left text-xs hover:bg-accent/50"
+        className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-accent/50"
         aria-expanded={open}
         aria-controls={checksId}
         onClick={() => setOpen((prev) => !prev)}
@@ -1783,7 +1783,7 @@ function ChecksSection({ checks }: { checks: PullCheck[] }) {
           {checks.map((check, index) => (
             <div
               key={`${check.name}-${index}`}
-              className="flex items-center gap-2 px-2 py-1 text-[11px]"
+              className="flex items-center gap-2 px-3 py-1.5 text-[11px]"
             >
               <span
                 className={`size-1.5 shrink-0 rounded-full ${checkDotClass(check.status)}`}
@@ -1817,7 +1817,7 @@ function FileDiffCard({
   const [open, setOpen] = useState(false);
   return (
     <div className="border-b border-border last:border-b-0">
-      <div className="flex w-full items-center gap-2 px-2 py-1 hover:bg-accent/50">
+      <div className="flex w-full items-center gap-2 px-3 py-2 hover:bg-accent/50">
         <button
           type="button"
           className="shrink-0 text-[11px] text-muted-foreground"
@@ -1850,7 +1850,7 @@ function FileDiffCard({
             <Diff patch={file.patch} path={file.path} />
           </div>
         ) : (
-          <p className="border-t border-border px-2 py-1 text-[11px] text-muted-foreground">
+          <p className="border-t border-border px-3 py-2 text-[11px] text-muted-foreground">
             Diff too large —{" "}
             <SafeUrlLink href={`${url}/files`} className="underline">
               view on GitHub ↗
@@ -1876,10 +1876,10 @@ function FilesChangedSection({
   const [open, setOpen] = useState(false);
   if (files.length === 0) return null;
   return (
-    <div className="border-y border-border">
+    <div className="overflow-hidden rounded-lg border border-border bg-card">
       <button
         type="button"
-        className="flex w-full items-center gap-2 px-2 py-1 text-left text-xs hover:bg-accent/50"
+        className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-accent/50"
         onClick={() => setOpen((previous) => !previous)}
         aria-expanded={open}
       >
@@ -1913,8 +1913,8 @@ function FilesChangedSection({
 
 function ReviewThreadCard({ thread }: { thread: ReviewThread }) {
   return (
-    <div className="border-y border-border">
-      <p className="flex items-center gap-2 border-b border-border px-2 py-1 font-mono text-[11px] text-muted-foreground">
+    <div className="overflow-hidden rounded-lg border border-border bg-card">
+      <p className="flex items-center gap-2 border-b border-border bg-muted/50 px-3 py-2 font-mono text-[11px] text-muted-foreground">
         <span className="min-w-0 truncate">{thread.path}</span>
         {thread.line !== null ? (
           <span className="shrink-0">:{thread.line}</span>
@@ -1925,7 +1925,7 @@ function ReviewThreadCard({ thread }: { thread: ReviewThread }) {
           <Diff patch={thread.diffHunk} path={thread.path} />
         </div>
       ) : null}
-      <div className="flex flex-col gap-2 p-2">
+      <div className="flex flex-col gap-2 p-3">
         {thread.comments.map((entry, index) => (
           <div key={index} className="border-b border-border pb-2 last:border-b-0 last:pb-0">
             <p className="mb-1 flex items-center gap-1.5 text-[11px] text-muted-foreground">
@@ -1970,7 +1970,7 @@ function PullTimeline({ pull }: { pull: PullDetail }) {
   }, [pull]);
   if (entries.length === 0 && pull.reviewThreads.length === 0) return null;
   return (
-    <div className="flex flex-col gap-2 px-2">
+    <div className="flex flex-col gap-2 px-3">
       <h3 className="text-[11px] font-medium tracking-wide text-muted-foreground">
         Activity · {entries.length + pull.reviewThreads.length}
       </h3>
@@ -2145,13 +2145,13 @@ function PullDetailView({
     <div className="flex min-w-0 flex-1 flex-col gap-2">
       <ChecksSection checks={pull.checks} />
 
-      <div className="border-y border-border">
-        <div className="flex items-center gap-2 border-b border-border px-2 py-1 text-[11px] text-muted-foreground">
+      <div className="overflow-hidden rounded-xl border border-border bg-card">
+        <div className="flex items-center gap-2 border-b border-border bg-muted/50 px-3 py-2 text-[11px] text-muted-foreground">
           <Avatar login={pull.author} size="size-4" />
           <span className="font-medium text-foreground">{pull.author}</span>
           opened · {relativeTime(pull.updatedAt)}
         </div>
-        <div className="p-2">
+        <div className="p-3">
           {pull.body.length > 0 ? (
             <Markdown content={pull.body} className="text-xs" />
           ) : (
@@ -2169,7 +2169,7 @@ function PullDetailView({
         deletions={pull.deletions}
       />
 
-      <div className="px-2">
+      <div className="px-3">
         <PullCommentBox repo={repo} number={number} onPosted={load} />
       </div>
     </div>
@@ -2178,7 +2178,7 @@ function PullDetailView({
   return (
     <div className="flex flex-col gap-2">
       <LinkErrorNotice error={linksError} onRetry={retryLinks} />
-      <div className="flex items-center gap-1 border-b border-border px-2 py-1 text-[11px] text-muted-foreground">
+      <div className="flex items-center gap-1 rounded-lg border border-border bg-card px-3 py-2 text-[11px] text-muted-foreground">
         {onBack !== undefined ? (
           <Button
             size="sm"
@@ -2201,7 +2201,7 @@ function PullDetailView({
         </SafeUrlLink>
       </div>
 
-      <div className="flex items-start gap-2 px-2 py-1">
+      <div className="flex items-start gap-2 px-3 py-2">
         <h2
           className={`min-w-0 flex-1 font-semibold tracking-tight text-foreground ${compact ? "text-sm" : "text-sm"}`}
         >
@@ -2243,7 +2243,7 @@ function PullDetailView({
       ) : (
         <div className="flex flex-col gap-2 lg:flex-row lg:gap-2">
           {mainColumn}
-          <aside className="flex w-full shrink-0 flex-col gap-3 border-t border-border px-2 py-2 lg:w-56 lg:border-l lg:border-t-0">
+          <aside className="flex w-full shrink-0 flex-col gap-3 border-t border-border p-3 lg:w-56 lg:border-l lg:border-t-0">
             <div className="flex flex-col gap-1">
               <SidebarHeading>Reviewers</SidebarHeading>
               <PullReviewersList pull={pull} />
@@ -2310,14 +2310,14 @@ function PullPickerList({
     return <EmptyState message="No open pull requests in the tracked repos." />;
   }
   return (
-    <div className="border-y border-border">
+    <div className="overflow-hidden rounded-xl border border-border bg-card">
       <div className="divide-y divide-border">
         {open.map((item) => (
           <button
             key={`${item.repo}#${item.number}`}
             type="button"
             disabled={disabled}
-            className="flex w-full items-center gap-2 px-2 py-1 text-left hover:bg-accent/50 disabled:pointer-events-none disabled:opacity-50"
+            className="flex w-full items-center gap-2 px-3 py-2 text-left hover:bg-accent/50 disabled:pointer-events-none disabled:opacity-50"
             onClick={() => onPick(item.repo, item.number)}
           >
             <StateDot kind="pr" state={item.state} />
@@ -2516,8 +2516,8 @@ function NewIssueForm({
   }, [rpc, repo, title, body, onCreated]);
 
   return (
-    <div className="flex w-full flex-col gap-2">
-      <div className="flex items-center gap-2 border-b border-border px-2 py-1">
+    <div className="flex w-full flex-col gap-2 overflow-hidden rounded-xl border border-border bg-card">
+      <div className="flex items-center gap-2 border-b border-border bg-muted/50 px-3 py-2">
         <Button size="sm" variant="ghost" className="h-6 px-1.5" onClick={onCancel} aria-label="Back to issues">
           ← Issues
         </Button>
@@ -2525,7 +2525,7 @@ function NewIssueForm({
         <span className="text-[11px] text-muted-foreground">— {repos.length} repos</span>
       </div>
       <form
-        className="flex flex-col gap-2 px-2"
+        className="flex flex-col gap-2 px-3 pb-3"
         onSubmit={(event) => {
           event.preventDefault();
           create();
@@ -2535,7 +2535,7 @@ function NewIssueForm({
           <div className="flex flex-col gap-1">
             <label htmlFor="github-new-issue-repo" className="text-[11px] font-medium tracking-wide text-muted-foreground">Repository</label>
             <Select value={repo} onValueChange={setRepo}>
-              <SelectTrigger id="github-new-issue-repo" className="h-6 w-full text-xs">
+              <SelectTrigger id="github-new-issue-repo" className="w-full text-xs">
                 <SelectValue placeholder="Select a repository" />
               </SelectTrigger>
               <SelectContent>
@@ -2554,7 +2554,6 @@ function NewIssueForm({
               required
               aria-describedby="github-new-issue-title-help"
               aria-invalid={title.length > 0 && title.trim().length === 0}
-              className="h-6"
             />
           </div>
         </div>
@@ -2570,7 +2569,7 @@ function NewIssueForm({
             className="min-h-32 resize-y"
           />
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border py-2">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3">
           <div className="min-w-0">
             <p className="text-[11px] text-muted-foreground">
               {repo.length === 0 ? "Select a repository." : title.trim().length === 0 ? "Add a title." : "Ready to create."}
@@ -2719,7 +2718,7 @@ function GithubPanel({ subPath }: PluginNavPanelProps) {
     <div className="min-h-0 flex-1 overflow-y-auto p-3">
       <div className="w-full space-y-2">
         {statusError !== null ? (
-          <div role="alert" className="border-b border-border px-2 py-3">
+          <div role="alert" className="rounded-lg border border-border bg-card px-3 py-2">
             <EmptyState message={`Could not load GitHub status: ${statusError}`} />
             <div className="flex justify-center pt-2">
               <Button size="sm" variant="outline" onClick={retryStatus}>
@@ -2782,7 +2781,7 @@ function SavedViewsBar({
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2 border-b border-border px-2 py-1.5">
+    <div className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-card px-3 py-2">
       <select
         value={selected}
         onChange={(event) => {
@@ -2790,7 +2789,7 @@ function SavedViewsBar({
           setSelected(event.target.value);
           if (next !== undefined) onChange(next.query);
         }}
-        className="h-6 border border-input bg-transparent px-2 text-[11px] text-foreground"
+        className="h-8 rounded-md border border-input bg-transparent px-2 text-[11px] text-foreground"
         aria-label="Saved views"
       >
         <option value="">Saved views</option>
@@ -2804,7 +2803,7 @@ function SavedViewsBar({
         value={name}
         onChange={(event) => setName(event.target.value)}
         placeholder="Name this view"
-        className="h-6 w-32 border border-input bg-transparent px-2 text-[11px]"
+        className="h-8 w-32 rounded-md border border-input bg-transparent px-2 text-[11px]"
         aria-label="Saved view name"
       />
       <Button
@@ -2870,7 +2869,7 @@ function AddRepositoryForm() {
   );
   return (
     <form
-      className="flex items-center gap-2 border-b border-border px-2 py-1.5"
+      className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2"
       onSubmit={submit}
     >
       <label htmlFor="github-add-repository" className="shrink-0 text-[11px] font-medium tracking-wide text-muted-foreground">
@@ -2883,7 +2882,7 @@ function AddRepositoryForm() {
         placeholder="owner/repository"
         autoComplete="off"
         disabled={adding}
-        className="h-6 flex-1 text-xs"
+        className="flex-1 text-xs"
       />
       <Button size="sm" type="submit" disabled={adding || value.trim().length === 0}>
         {adding ? "Adding…" : "Add"}
@@ -2961,8 +2960,8 @@ function RepositoryManager({
   };
 
   return (
-    <div className="border-b border-border">
-      <div className="flex items-center justify-between gap-2 px-2 py-1 border-b border-border">
+    <div className="overflow-hidden rounded-xl border border-border bg-card">
+      <div className="flex items-center justify-between gap-2 border-b border-border bg-muted/50 px-3 py-2">
         <span className="text-[11px] font-medium tracking-wide text-muted-foreground">
           Tracked · {status.repos.length} repo{status.repos.length === 1 ? "" : "s"}
         </span>
@@ -2977,7 +2976,7 @@ function RepositoryManager({
         />
       ) : null}
       {status.repos.length === 0 ? (
-        <p className="px-2 py-2 text-[11px] text-muted-foreground">
+        <p className="px-3 py-2 text-[11px] text-muted-foreground">
           No repositories yet. Add an owner/repo above.
         </p>
       ) : (
@@ -2995,7 +2994,7 @@ function RepositoryManager({
             const openIssues = items.filter((item) => item.kind === "issue" && item.state === "OPEN").length;
             const openPrs = items.filter((item) => item.kind === "pr" && item.state === "OPEN").length;
             return (
-              <div key={entry.repo} className="flex items-center gap-2 px-2 py-1.5">
+              <div key={entry.repo} className="flex items-center gap-2 px-3 py-2">
                 <span className={`size-1.5 shrink-0 rounded-full ${dot}`} title={repoHealthText(health)} aria-hidden="true" />
                 <div className="min-w-0 flex-1 truncate">
                   {onSelectRepo !== undefined ? (
@@ -3068,7 +3067,7 @@ function ListView({
   return (
     <div className="flex flex-col gap-2">
       <SavedViewsBar tab={kind === "pr" ? "pulls" : "issues"} query={query} onChange={setQuery} />
-      <div className="px-2 py-1.5">
+      <div>
         <FilterBar
           value={query}
           onChange={setQuery}
@@ -3078,7 +3077,7 @@ function ListView({
         />
       </div>
       {filtered !== null ? (
-        <div className="flex items-center justify-between px-2 text-[11px] tracking-tight text-muted-foreground" aria-live="polite">
+        <div className="flex items-center justify-between px-1 text-[11px] tracking-tight text-muted-foreground" aria-live="polite">
           <span className="font-medium text-foreground">
             {filtered.length} {kind === "pr" ? "pull requests" : "issues"}
           </span>
@@ -3184,7 +3183,7 @@ function GithubPanelBody({
 
   const kind = route.view === "pulls" ? "pr" : "issue";
   return (
-    <div className="flex flex-col gap-0">
+    <div className="flex flex-col gap-2">
       <AddRepositoryForm />
       {status !== null ? <RepositoryManager status={status} onSelectRepo={selectRepo} /> : null}
       <Tabs
@@ -3197,15 +3196,15 @@ function GithubPanelBody({
           );
         }}
       >
-        <div className="flex flex-col gap-0">
-          <div className="flex items-center gap-2 border-b border-border px-2 py-1">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2">
             <TabsList>
               <TabsTrigger value="issues">Issues</TabsTrigger>
               <TabsTrigger value="pulls">Pull requests</TabsTrigger>
             </TabsList>
             <div className="flex-1" />
             {route.view === "issues" ? (
-              <Button size="sm" className="h-6 text-[11px]" onClick={() => navigate({ view: "new" })}>
+              <Button size="sm" className="h-6 rounded-full px-3 text-[11px]" onClick={() => navigate({ view: "new" })}>
                 New issue
               </Button>
             ) : null}

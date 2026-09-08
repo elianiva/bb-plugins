@@ -29,9 +29,9 @@ export function Badge({
     <span
       {...props}
       className={cn(
-        "inline-flex items-center gap-1 border px-1 py-0 text-[10px] font-medium leading-none tracking-tight",
+        "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium leading-none tracking-tight",
         variant === "default" && "border-border bg-transparent text-foreground",
-        variant === "secondary" && "border-border bg-transparent text-muted-foreground",
+        variant === "secondary" && "border-transparent bg-accent text-muted-foreground",
         variant === "destructive" && "border-border bg-transparent text-red-600 dark:text-red-400",
         variant === "outline" && "border-border bg-transparent text-muted-foreground",
         className,
@@ -55,7 +55,7 @@ export const Button = forwardRef<
       ref={ref}
       {...props}
       className={cn(
-        "inline-flex items-center justify-center border px-2 py-1 text-[11px] font-medium leading-none tracking-tight focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex items-center justify-center rounded-md border px-2 py-1 text-[11px] font-medium leading-none tracking-tight focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
         variant === "default" && "border-border bg-foreground text-background hover:bg-accent hover:text-foreground",
         variant === "outline" && "border-border bg-transparent hover:bg-accent",
         variant === "ghost" && "border-transparent bg-transparent hover:bg-accent",
@@ -74,7 +74,7 @@ export function Input({ className, ...props }: InputHTMLAttributes<HTMLInputElem
     <input
       {...props}
       className={cn(
-        "flex h-7 w-full border border-input bg-transparent px-2 py-1 text-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+        "flex h-8 w-full rounded-md border border-input bg-transparent px-2 py-1 text-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
         className,
       )}
     />
@@ -90,7 +90,7 @@ export const Textarea = forwardRef<
       ref={ref}
       {...props}
       className={cn(
-        "flex min-h-20 w-full border border-input bg-transparent px-2 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+        "flex min-h-20 w-full rounded-md border border-input bg-transparent px-2 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
         className,
       )}
     />
@@ -248,7 +248,7 @@ export function DropdownMenuContent({ children, className, align: _align }: { ch
       ref={contentRef}
       role="menu"
       tabIndex={-1}
-      className={cn("absolute top-full z-50 mt-1 min-w-40 border border-border bg-popover p-1", alignClass, className)}
+      className={cn("absolute top-full z-50 mt-1 min-w-40 overflow-hidden rounded-lg border border-border bg-popover p-1 shadow-md", alignClass, className)}
       onClick={(event) => event.stopPropagation()}
       onKeyDown={(event) => {
         if (event.key === "Tab") {
@@ -275,12 +275,12 @@ export function DropdownMenuContent({ children, className, align: _align }: { ch
 
 export function DropdownMenuItem({ children, onSelect, disabled }: { children: ReactNode; onSelect?: () => void; disabled?: boolean }) {
   const menu = useContext(MenuContext);
-  return <button type="button" role="menuitem" disabled={disabled} className="flex w-full items-center px-2 py-1 text-left text-xs hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50" onClick={(event) => { event.stopPropagation(); onSelect?.(); menu?.close(); }}>{children}</button>;
+  return <button type="button" role="menuitem" disabled={disabled} className="flex w-full items-center rounded-md px-2 py-1 text-left text-xs hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50" onClick={(event) => { event.stopPropagation(); onSelect?.(); menu?.close(); }}>{children}</button>;
 }
 
 export function DropdownMenuCheckboxItem({ children, checked, onCheckedChange, onSelect }: { children: ReactNode; checked?: boolean; onCheckedChange?: (checked: boolean) => void; onSelect?: (event: React.MouseEvent) => void }) {
   const menu = useContext(MenuContext);
-  return <button type="button" role="menuitemcheckbox" aria-checked={checked === true} className="flex w-full items-center gap-2 px-2 py-1 text-left text-xs hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" onClick={(event) => { event.stopPropagation(); onSelect?.(event); if (!event.defaultPrevented) { onCheckedChange?.(!checked); menu?.close(); } }}><span className="w-3 text-[10px]">{checked ? "✓" : ""}</span>{children}</button>;
+  return <button type="button" role="menuitemcheckbox" aria-checked={checked === true} className="flex w-full items-center gap-2 rounded-md px-2 py-1 text-left text-xs hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" onClick={(event) => { event.stopPropagation(); onSelect?.(event); if (!event.defaultPrevented) { onCheckedChange?.(!checked); menu?.close(); } }}><span className="w-3 text-[10px]">{checked ? "✓" : ""}</span>{children}</button>;
 }
 
 export function DropdownMenuLabel({ children }: { children: ReactNode }) { return <div className="px-2 py-1 text-[11px] font-medium tracking-wide text-muted-foreground">{children}</div>; }
@@ -358,7 +358,7 @@ export const SelectTrigger = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<
     if (typeof ref === "function") ref(node);
     else if (ref) ref.current = node;
   };
-  return <button {...props} ref={setTriggerRef} id={id ?? select?.triggerId} type="button" aria-haspopup="listbox" aria-expanded={select?.open ?? false} aria-controls={select?.contentId} className={cn("flex h-7 w-full items-center justify-between border border-input bg-transparent px-2 text-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring", className)} onClick={(event) => { event.stopPropagation(); props.onClick?.(event); if (!event.defaultPrevented && select) { if (select.open) select.close(); else select.setOpen(true); } }} onKeyDown={(event) => { props.onKeyDown?.(event); if (event.defaultPrevented) return; if (event.key === "Escape" && select?.open) { event.preventDefault(); select.close(); } else if (event.key === "ArrowDown" || event.key === "ArrowUp") { event.preventDefault(); select?.setOpen(true); } }}><span className="min-w-0 flex-1 truncate text-left">{children}</span><span aria-hidden="true" className="ml-1 text-[10px] text-muted-foreground">⌄</span></button>;
+  return <button {...props} ref={setTriggerRef} id={id ?? select?.triggerId} type="button" aria-haspopup="listbox" aria-expanded={select?.open ?? false} aria-controls={select?.contentId} className={cn("flex h-8 w-full items-center justify-between rounded-md border border-input bg-transparent px-2 text-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring", className)} onClick={(event) => { event.stopPropagation(); props.onClick?.(event); if (!event.defaultPrevented && select) { if (select.open) select.close(); else select.setOpen(true); } }} onKeyDown={(event) => { props.onKeyDown?.(event); if (event.defaultPrevented) return; if (event.key === "Escape" && select?.open) { event.preventDefault(); select.close(); } else if (event.key === "ArrowDown" || event.key === "ArrowUp") { event.preventDefault(); select?.setOpen(true); } }}><span className="min-w-0 flex-1 truncate text-left">{children}</span><span aria-hidden="true" className="ml-1 text-[10px] text-muted-foreground">⌄</span></button>;
 });
 export function SelectValue({ placeholder }: { placeholder?: string }) { const select = useContext(SelectContext); return <span>{(select?.value && select.labels[select.value]) || select?.value || placeholder || "Select"}</span>; }
 export function SelectContent({ children, className }: { children: ReactNode; className?: string }) {
@@ -375,7 +375,7 @@ export function SelectContent({ children, className }: { children: ReactNode; cl
     id={select.contentId}
     role="listbox"
     aria-label="Select options"
-    className={cn("absolute left-0 top-full z-50 mt-1 max-h-72 w-full overflow-y-auto border border-border bg-popover p-1", className)}
+    className={cn("absolute left-0 top-full z-50 mt-1 max-h-72 w-full overflow-hidden overflow-y-auto rounded-lg border border-border bg-popover p-1 shadow-md", className)}
     onKeyDown={(event) => {
       const options = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="option"]:not([disabled])'));
       if (event.key === "Escape") {
@@ -417,7 +417,7 @@ export function SelectItem({ value, children }: { value: string; children: React
   const label = textContent(children) || value;
   const itemId = useId();
   useEffect(() => { select?.registerLabel(value, label); }, [select, value, label]);
-  return <button id={`${select?.contentId}-${itemId}`} data-value={value} type="button" role="option" aria-selected={select?.value === value} tabIndex={select?.value === value ? 0 : -1} className="flex w-full items-center px-2 py-1 text-left text-xs hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" onClick={(event) => { event.stopPropagation(); select?.setValue(value); }}>{children}</button>;
+  return <button id={`${select?.contentId}-${itemId}`} data-value={value} type="button" role="option" aria-selected={select?.value === value} tabIndex={select?.value === value ? 0 : -1} className="flex w-full items-center rounded-md px-2 py-1 text-left text-xs hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" onClick={(event) => { event.stopPropagation(); select?.setValue(value); }}>{children}</button>;
 }
 interface TabsContextValue { value: string; setValue: (value: string) => void; id: string; }
 const TabsContext = createContext<TabsContextValue | null>(null);
@@ -426,14 +426,14 @@ export function Tabs({ value, onValueChange, children }: { value: string; onValu
   return <TabsContext.Provider value={{ value, setValue: onValueChange, id }}><div>{children}</div></TabsContext.Provider>;
 }
 export function TabsList({ children }: { children: ReactNode }) {
-  return <div role="tablist" aria-label="GitHub views" className="flex items-center gap-4 border-b border-border">{children}</div>;
+  return <div role="tablist" aria-label="GitHub views" className="inline-flex items-center gap-1 rounded-lg bg-muted p-1">{children}</div>;
 }
 export function TabsTrigger({ value, children }: { value: string; children: ReactNode }) {
   const tabs = useContext(TabsContext);
   const active = tabs?.value === value;
   const tabId = tabs === null ? undefined : `${tabs.id}-tab-${value}`;
   const panelId = tabs === null ? undefined : `${tabs.id}-panel-${value}`;
-  return <button id={tabId} type="button" role="tab" aria-selected={active} aria-controls={panelId} tabIndex={active ? 0 : -1} data-value={value} className={cn("border-b-[1.5px] -mb-px px-1 py-1.5 text-[11px] font-medium tracking-wide focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring", active ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground")} onClick={() => tabs?.setValue(value)} onKeyDown={(event) => { if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return; const list = event.currentTarget.closest('[role="tablist"]'); const triggers = list ? Array.from(list.querySelectorAll<HTMLButtonElement>('[role="tab"]')) : []; if (triggers.length === 0) return; event.preventDefault(); const current = triggers.indexOf(event.currentTarget); const nextIndex = event.key === "Home" ? 0 : event.key === "End" ? triggers.length - 1 : (current + (event.key === "ArrowRight" ? 1 : -1) + triggers.length) % triggers.length; const next = triggers[nextIndex]; next?.focus(); if (next) tabs?.setValue(next.dataset.value ?? value); }}>{children}</button>;
+  return <button id={tabId} type="button" role="tab" aria-selected={active} aria-controls={panelId} tabIndex={active ? 0 : -1} data-value={value} className={cn("rounded-md px-3 py-1.5 text-[11px] font-medium tracking-wide focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring", active ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")} onClick={() => tabs?.setValue(value)} onKeyDown={(event) => { if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return; const list = event.currentTarget.closest('[role="tablist"]'); const triggers = list ? Array.from(list.querySelectorAll<HTMLButtonElement>('[role="tab"]')) : []; if (triggers.length === 0) return; event.preventDefault(); const current = triggers.indexOf(event.currentTarget); const nextIndex = event.key === "Home" ? 0 : event.key === "End" ? triggers.length - 1 : (current + (event.key === "ArrowRight" ? 1 : -1) + triggers.length) % triggers.length; const next = triggers[nextIndex]; next?.focus(); if (next) tabs?.setValue(next.dataset.value ?? value); }}>{children}</button>;
 }
 export function TabsPanel({ value, children }: { value: string; children: ReactNode }) {
   const tabs = useContext(TabsContext);
