@@ -7,6 +7,7 @@
     { "name": "github-plus", "source": "./bb-plugin-github-plus" },
     { "name": "pstack", "source": "./bb-plugin-pstack" },
     { "name": "reasoning-split", "source": "./bb-plugin-reasoning-split" },
+    { "name": "send-capture", "source": "./bb-plugin-send-capture" },
     { "name": "simple-subagent", "source": "./bb-plugin-simple-subagent" },
     { "name": "trajectory", "source": "./bb-plugin-trajectory" }
   ]

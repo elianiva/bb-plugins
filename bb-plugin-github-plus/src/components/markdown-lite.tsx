@@ -40,7 +40,7 @@ function renderInline(text: string): React.ReactNode[] {
       nodes.push(
         <code
           key={key++}
-          className="rounded bg-muted px-1 py-0.5 font-mono text-[0.85em]"
+          className="rounded-md bg-muted px-1 py-0.5 font-mono text-[0.85em]"
         >
           {token.slice(1, -1)}
         </code>,

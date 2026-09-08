@@ -1,0 +1,26 @@
+{
+  "name": "bb-plugin-send-capture",
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "bb": ">=0.40",
+    "bbPluginSdk": ">=0.4.21"
+  },
+  "bb": {
+    "name": "Send Capture",
+    "description": "Let agents capture a screenshot or recording with agent-browser and send it inline for verification.",
+    "branding": {
+      "icon": "Camera"
+    },
+    "server": "./server.ts",
+    "skills": ["skills"]
+  },
+  "dependencies": {
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@get-bb/plugin-sdk": "0.4.21",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  }
+}

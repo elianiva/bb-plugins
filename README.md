@@ -2,18 +2,20 @@
 
 A collection of [BB](https://getbb.app) plugins built for personal use. Each subdirectory is a standalone plugin with its own `package.json` and BB manifest. Install one or install all via `.bb/plugins.json`.
 
-> Originally a private scratch repo for syncing between machines — now public so others can use, fork, and reference the plugins.
-
 ## Plugins
+
+Each plugin documents itself in its own directory. One line each here.
 
 | Plugin | What it does |
 |--------|--------------|
-| [bb-plugin-bocchi](bb-plugin-bocchi/) | **Bocchi theme** — pink, cute, soft gradient theme for BB (ported from the Bocchi the Rock! palette). |
-| [bb-plugin-github-plus](bb-plugin-github-plus/) | **GitHub Plus** — browse GitHub issues and pull requests inside BB. Discover repos from `origin` remotes, track extra repos, filter/search, view discussions/checks/reviews/diffs, create/comment/close/assign/label, and start agent work from an issue or PR. Requires `gh` auth. |
-| [bb-plugin-pstack](bb-plugin-pstack/) | **Pstack** — BB port of [poteto's pstack](https://github.com/cursor/plugins/tree/main/pstack) (MIT). 45+ skills (`poteto-mode`, `how`, `why`, `architect`, `arena`, `swarm`, `interrogate`, etc.), sticky poteto-mode instruction injection, `pstack_todo` / `pstack_config` / `pstack_sessions` tools, and `bb pstack` CLI (`status`, `poteto on|off`, `todo`, `config`, `sessions`, `setup`). Delegation via `bb-plugin-simple-subagent`. See [VENDOR.md](bb-plugin-pstack/VENDOR.md). |
-| [bb-plugin-reasoning-split](bb-plugin-reasoning-split/) | **Reasoning Split** — splits the reasoning-level selector into its own dropdown beside the model picker (e.g. `Claude Opus 4.5 | High · Normal | Build | Full access`). |
-| [bb-plugin-simple-subagent](bb-plugin-simple-subagent/) | **Simple Subagent** — minimal delegation primitive. Registers one tool, `subagent`, for spawning isolated child threads: single `task`, parallel `tasks[]` (cap 4), or sequential `chain` with `{previous}` interpolation. Split out of `pstack` so other plugins can delegate without pulling the full skill set. |
-| [bb-plugin-trajectory](bb-plugin-trajectory/) | **Trajectory** — DeepSeek-harness-style debug view. Full timeline of agent operations (turns, tool calls, file edits, token usage) for inspecting what an agent did. |
+| [bocchi](bb-plugin-bocchi/) | Cute pink theme for BB, based on [elianiva.com](https://elianiva.com). |
+| [github-plus](bb-plugin-github-plus/) | GitHub issues and pull requests inside BB. Forked from the original by Tom Swift. Requires `gh` auth. |
+| [pstack](bb-plugin-pstack/) | Poteto agent skills plus the `bb pstack` CLI. |
+| [reasoning-split](bb-plugin-reasoning-split/) | Reasoning level as its own dropdown beside the model picker. |
+| [send-capture](bb-plugin-send-capture/) | Agents send verification screenshots and recordings inline. |
+| [simple-subagent](bb-plugin-simple-subagent/) | Minimal `subagent` tool for spawning child threads. |
+| [trajectory](bb-plugin-trajectory/) | Timeline view of agent turns, tool calls, edits, and tokens. |
+| [sidebar](bb-sidebar/) | Stable thread list with ordering, snooze, settle, and bulk actions. Forked from [yusuf8834/bb-sidebar](https://github.com/yusuf8834/bb-sidebar). |
 
 ## Install
 
