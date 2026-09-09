@@ -23,7 +23,6 @@ const ROLE_NAMES = [
   "hardest tasks",
   "how explorer",
   "how explainer",
-  "how critics",
   "why investigators",
   "why synthesizer",
   "reflect tooling",
@@ -514,7 +513,7 @@ export default async function plugin(bb: BbPluginApi) {
           `Config roles: ${Object.keys(config.roles).length} (${ROLE_NAMES.length} known)`,
           `Todos (${threadFlag ?? "global"}): ${todos.length ? todos.map((t, i) => `\n  ${i + 1}. ${t}`).join("") : " none"}`,
           ``,
-          `Skills: ${ROLE_NAMES.length} roles, 40+ SKILL.md files under skills/`,
+          `Skills: ${ROLE_NAMES.length} roles, 47 SKILL.md files under skills/`,
         ].join("\n");
         return reply(value, text);
       }

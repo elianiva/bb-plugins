@@ -6,7 +6,7 @@ Based on [cursor/plugins/pstack](https://github.com/cursor/plugins/tree/main/pst
 
 ## What you get
 
-- **40+ skills** under `skills/` — `poteto-mode`, `how`, `why`, `architect`, `arena`, `swarm`, `interrogate`, `reflect`, `tdd`, `unslop`, `no-comments`, and 21 `principle-*` skills. BB auto-imports every `skills/<name>/SKILL.md` into agent threads.
+- **50 skills** under `skills/` — `poteto-mode`, `how`, `why`, `architect`, `arena`, `swarm`, `interrogate`, `reflect`, `tdd`, `unslop`, `no-comments`, and 23 `principle-*` skills. BB auto-imports every `skills/<name>/SKILL.md` into agent threads.
 - **Poteto mode** — sticky instruction injection via `bb.agents.contributeInstructions`. Toggle with `bb pstack poteto on|off` (per-thread or `--global`), or `bb pstack poteto "your task"` to enable and hint. Agents read `skill://poteto-mode` and its Principles index before planning.
 - **Native tools** (visible to agents):
   - `pstack_todo` — checklist (`get|set|add|complete`), persisted per thread in `bb.storage.kv`
@@ -65,7 +65,7 @@ Or via the `pstack_config` tool from inside an agent.
 
 ## Skills
 
-All 45 skills vendored from upstream (see [VENDOR.md](VENDOR.md)), with minimal BB adaptations:
+All 47 skills vendored from upstream (see [VENDOR.md](VENDOR.md)), with minimal BB adaptations:
 
 - `subagent_type: generalPurpose` → `agent: poteto-agent` via the `subagent` tool (from [bb-plugin-simple-subagent](../bb-plugin-simple-subagent))
 - Cursor model slugs → `inherit-parent` defaults via `pstack_config` / `bb pstack config`

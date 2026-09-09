@@ -18,7 +18,6 @@ const ROLE_NAMES = [
   "hardest tasks",
   "how explorer",
   "how explainer",
-  "how critics",
   "why investigators",
   "why synthesizer",
   "reflect tooling",
